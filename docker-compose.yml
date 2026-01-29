@@ -1,0 +1,15 @@
+services:
+  endfield-auto-check-in:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: endfield-auto-check-in
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Seoul
+      - NODE_ENV=production
+    # Optional: volume for logs
+    # volumes:
+    #   - ./logs:/app/logs
