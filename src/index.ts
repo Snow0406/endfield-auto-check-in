@@ -26,10 +26,16 @@ async function main(): Promise<void> {
     // Initialize dependencies (Dependency Injection)
     console.log("\x1b[90m   Initializing services...\x1b[0m");
     const apiClient = new SkportApiClient();
-    const notifier = new DiscordNotifier(config.discordWebhook);
+    const notifier = new DiscordNotifier(
+      config.discordWebhook,
+      config.discordWebhookUsername,
+      config.discordWebhookAvatarUrl,
+    );
     const checkInService = new CheckInService(apiClient, notifier);
     const scheduler = new CronScheduler(config, checkInService);
     console.log("\x1b[92m   ✓ Services initialized\x1b[0m\n");
+
+    await checkInService.executeAll(config.accounts);
 
     // Start scheduler
     scheduler.start();
