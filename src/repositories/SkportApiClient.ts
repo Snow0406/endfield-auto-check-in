@@ -71,7 +71,7 @@ export class SkportApiClient {
       return await this.withRetry(async () => {
         const response = await this.client.post<ApiResponse<ClaimData>>(
           "/game/endfield/attendance",
-          null,
+          {},
           {
             headers: this.buildAccountHeaders(account),
           },
