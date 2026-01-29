@@ -10,7 +10,7 @@ const DEFAULT_TIMEZONE = "Asia/Seoul";
 
 const DEFAULT_USERNAME = "Endfield Auto Check-In";
 const DEFAULT_AVATAR_URL =
-  "https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/assets/avatar.png";
+  "https://raw.githubusercontent.com/Snow0406/endfield-auto-check-in/main/assets/bot-image.png";
 
 /**
  * Load and validate application configuration

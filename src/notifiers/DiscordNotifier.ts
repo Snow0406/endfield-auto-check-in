@@ -70,13 +70,13 @@ export class DiscordNotifier {
     let title: string;
     let color: number;
     if (errorResults.length > 0) {
-      title = "❌ Check-In Completed with Errors";
+      title = "Check-In Completed with Errors";
       color = EmbedColors.ERROR;
     } else if (claimedResults.length > 0) {
-      title = "✅ Check-In Completed Successfully";
+      title = "Check-In Completed Successfully";
       color = EmbedColors.SUCCESS;
     } else {
-      title = "ℹ️ All Accounts Already Checked In";
+      title = "All Accounts Already Checked In";
       color = EmbedColors.INFO;
     }
 
