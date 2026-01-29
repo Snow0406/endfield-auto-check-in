@@ -49,7 +49,7 @@ export class SkportApiClient {
     try {
       return await this.withRetry(async () => {
         const response = await this.client.get<ApiResponse<AttendanceData>>(
-          "/endfield/attendance/check",
+          "/game/endfield/attendance",
           {
             headers: this.buildAccountHeaders(account),
           },
@@ -70,7 +70,7 @@ export class SkportApiClient {
     try {
       return await this.withRetry(async () => {
         const response = await this.client.post<ApiResponse<ClaimData>>(
-          "/endfield/attendance/claim",
+          "/game/endfield/attendance",
           null,
           {
             headers: this.buildAccountHeaders(account),
