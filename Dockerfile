@@ -8,7 +8,7 @@ RUN corepack enable pnpm
 
 # Install dependencies
 COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Copy source and build
 COPY tsconfig.json ./
@@ -25,7 +25,7 @@ RUN corepack enable pnpm
 
 # Install production dependencies only
 COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --prod --frozen-lockfile
+RUN pnpm install --prod
 
 # Copy built files from builder
 COPY --from=builder /app/dist ./dist
