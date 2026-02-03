@@ -6,8 +6,19 @@
  * Account configuration
  */
 export interface Account {
-  readonly cred: string;
+  readonly account_token: string;
   readonly sk_game_role: string;
+}
+
+/**
+ * Runtime credentials obtained from OAuth
+ */
+export interface RuntimeCredentials {
+  readonly cred: string;
+  readonly salt: string;
+  readonly userId: string;
+  readonly hgId?: string;
+  readonly obtainedAt: number;
 }
 
 /**

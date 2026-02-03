@@ -9,7 +9,13 @@ import type {
   ApiResponse,
   AttendanceData,
   ClaimData,
+  RuntimeCredentials,
 } from "../types/index.js";
+import {
+  performOAuthFlow,
+  generateSignV1,
+  generateSignV2,
+} from "../utils/oauth.js";
 
 const BASE_URL = "https://zonai.skport.com/web/v1";
 const REQUEST_TIMEOUT = 30_000; // 30 seconds
@@ -26,17 +32,48 @@ const MAX_RETRY_DELAY = 10_000; // 10 seconds
  */
 export class SkportApiClient {
   private readonly client: AxiosInstance;
+  private readonly credentials = new Map<string, RuntimeCredentials>();
 
   constructor() {
     this.client = axios.create({
       baseURL: BASE_URL,
       timeout: REQUEST_TIMEOUT,
       headers: {
-        "Content-Type": "application/json",
+        accept: "*/*",
+        "accept-language": "ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7",
+        "content-type": "application/json",
+        "sec-ch-ua":
+          '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": '"Windows"',
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
         Referer: "https://game.skport.com/",
         Origin: "https://game.skport.com",
       },
     });
+  }
+
+  /**
+   * Initialize OAuth credentials for an account
+   * @param account Account configuration
+   */
+  async initOAuth(account: Account): Promise<boolean> {
+    const accountKey = account.sk_game_role;
+
+    try {
+      const credentials = await performOAuthFlow(account.account_token);
+      this.credentials.set(accountKey, credentials);
+      return true;
+    } catch (error) {
+      console.error(
+        `\x1b[91m   ✗ OAuth failed for ${accountKey}: ${error instanceof Error ? error.message : String(error)}\x1b[0m`,
+      );
+      return false;
+    }
   }
 
   /**
@@ -71,9 +108,16 @@ export class SkportApiClient {
       return await this.withRetry(async () => {
         const response = await this.client.post<ApiResponse<ClaimData>>(
           "/game/endfield/attendance",
-          {},
+          undefined,
           {
-            headers: this.buildAccountHeaders(account),
+            headers: {
+              ...this.buildAccountHeaders(account, {
+                useV2Sign: true,
+                signPath: "/web/v1/game/endfield/attendance",
+                body: "",
+              }),
+              "Content-Type": "application/json",
+            },
           },
         );
 
@@ -87,14 +131,40 @@ export class SkportApiClient {
   /**
    * Build request headers for SKPort API
    */
-  private buildAccountHeaders(account: Account): Record<string, string> {
+  private buildAccountHeaders(
+    account: Account,
+    options?: { useV2Sign?: boolean; signPath?: string; body?: string },
+  ): Record<string, string> {
+    const accountKey = account.sk_game_role;
+    const credentials = this.credentials.get(accountKey);
+
+    if (!credentials) {
+      throw new Error(
+        `No credentials available for ${accountKey}. Call initOAuth first.`,
+      );
+    }
+
+    const timestamp = Math.floor(Date.now() / 1000).toString();
+    const sign = options?.useV2Sign
+      ? generateSignV2(
+          options.signPath ?? "/web/v1/game/endfield/attendance",
+          timestamp,
+          PLATFORM_ID,
+          API_VERSION,
+          credentials.salt,
+          options.body ?? "",
+        )
+      : generateSignV1(timestamp, credentials.cred);
+
     return {
-      cred: account.cred,
+      cred: credentials.cred,
       "sk-game-role": account.sk_game_role,
-      "sk-language": "en",
-      timestamp: Math.floor(Date.now() / 1000).toString(),
-      vname: API_VERSION,
+      "sk-language": "en_US",
+      timestamp,
+      vName: API_VERSION,
       platform: PLATFORM_ID,
+      sign,
+      priority: "u=1, i",
     };
   }
 

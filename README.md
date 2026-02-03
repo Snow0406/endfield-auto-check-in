@@ -47,13 +47,15 @@ Windows PowerShell (if `cp` is not available):
 Copy-Item .env.example .env
 ```
 
-### 3) Get credentials (`cred` / `sk-game-role`)
+### 3) Get credentials (`account_token` / `sk-game-role`)
 
-1. Open https://game.skport.com/endfield/sign-in in your browser
-2. Open DevTools (F12) → Network
-3. Log in and find the request with URL: `https://zonai.skport.com/web/v1/game/endfield/attendance`
-
-4. Copy `cred` and `sk-game-role` from Request Headers
+1. Open https://www.skport.com/ in your browser
+2. Open DevTools (F12) → Application/Storage → Cookies
+3. Refresh the page.
+4. Find the `ACCOUNT_TOKEN` cookie and copy its value
+5. Go to https://game.skport.com/endfield and open Network tab
+6. Find any request to `zonai.skport.com`
+7. Copy `sk-game-role` from Request Headers
 
 ### 4) Configure environment variables
 
@@ -73,21 +75,24 @@ CRON_CHECKIN=0 1 * * *
 # Timezone (Optional, Default: "Asia/Seoul")
 TIMEZONE=Asia/Seoul
 
-ACCOUNT_1_CRED=your_cred_token
+# Account Token from Gryphline (Required)
+ACCOUNT_1_ACCOUNT_TOKEN=your_account_token_from_cookie
 ACCOUNT_1_SK_GAME_ROLE=your_server_uid
 ```
 
 Multiple accounts:
 
 ```env
-ACCOUNT_1_CRED=your_cred_token
+ACCOUNT_1_ACCOUNT_TOKEN=your_account_token_from_cookie
 ACCOUNT_1_SK_GAME_ROLE=your_server_uid
 
-ACCOUNT_2_CRED=...
+ACCOUNT_2_ACCOUNT_TOKEN=...
 ACCOUNT_2_SK_GAME_ROLE=...
 ```
 
-Only `ACCOUNT_N_CRED` and `ACCOUNT_N_SK_GAME_ROLE` are required per account. Add `ACCOUNT_3_*`, `ACCOUNT_4_*`, etc. as needed.
+Only `ACCOUNT_N_ACCOUNT_TOKEN` and `ACCOUNT_N_SK_GAME_ROLE` are required per account. Add `ACCOUNT_3_*`, `ACCOUNT_4_*`, etc. as needed.
+
+**Note:** The `account_token` is obtained from your browser cookies after logging in to https://www.skport.com/. This token is used to automatically generate temporary credentials via OAuth, which are refreshed every 30 minutes.
 
 Timezone configuration:
 

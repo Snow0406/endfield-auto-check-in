@@ -70,6 +70,17 @@ export class CheckInService {
    */
   private async executeForAccount(account: Account): Promise<CheckInResult> {
     try {
+      // Step 0: Initialize OAuth credentials
+      const oauthSuccess = await this.apiClient.initOAuth(account);
+      if (!oauthSuccess) {
+        return {
+          uid: account.sk_game_role,
+          status: "error",
+          rewards: [],
+          error: "Failed to initialize OAuth credentials",
+        };
+      }
+
       // Step 1: Check current attendance status
       const checkResponse = await this.apiClient.checkAttendance(account);
 

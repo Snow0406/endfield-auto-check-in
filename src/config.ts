@@ -30,7 +30,7 @@ export function loadConfig(): Config {
 
   if (accounts.length === 0) {
     throw new Error(
-      "No accounts configured. Please set ACCOUNT_1_CRED, and ACCOUNT_1_SK_GAME_ROLE",
+      "No accounts configured. Please set ACCOUNT_1_ACCOUNT_TOKEN and ACCOUNT_1_SK_GAME_ROLE",
     );
   }
 
@@ -60,7 +60,7 @@ function validateRequiredEnvVars(): void {
 
 /**
  * Load account configurations from environment variables
- * Pattern: ACCOUNT_N_CRED, ACCOUNT_N_SK_GAME_ROLE
+ * Pattern: ACCOUNT_N_ACCOUNT_TOKEN, ACCOUNT_N_SK_GAME_ROLE
  */
 function loadAccounts(): Account[] {
   const accountMap = new Map<number, Partial<Record<string, string>>>();
@@ -90,11 +90,11 @@ function loadAccounts(): Account[] {
   for (const [num, data] of Array.from(accountMap.entries()).sort(
     ([a], [b]) => a - b,
   )) {
-    const { cred, sk_game_role } = data;
+    const { account_token, sk_game_role } = data;
 
-    if (!cred || !sk_game_role) {
+    if (!account_token || !sk_game_role) {
       const missing: string[] = [];
-      if (!cred) missing.push("CRED");
+      if (!account_token) missing.push("ACCOUNT_TOKEN");
       if (!sk_game_role) missing.push("SK_GAME_ROLE");
 
       throw new Error(
@@ -103,7 +103,7 @@ function loadAccounts(): Account[] {
     }
 
     accounts.push({
-      cred,
+      account_token,
       sk_game_role,
     });
   }
