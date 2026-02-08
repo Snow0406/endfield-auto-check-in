@@ -49,11 +49,11 @@ Copy-Item .env.example .env
 
 ### 3) Get credentials (`account_token` / `sk-game-role`)
 
-1. Open https://www.skport.com/ in your browser
+1. Open https://game.skport.com/endfield/sign-in in your browser
 2. Open DevTools (F12) → Application/Storage → Cookies
 3. Refresh the page.
-4. Find the `ACCOUNT_TOKEN` cookie and copy its value
-5. Go to https://game.skport.com/endfield and open Network tab
+4. Find the `ACCOUNT_TOKEN` cookie, enable "Show URL-decoded" option, and copy its value
+5. And open Network tab, Refresh the page.
 6. Find any request to `zonai.skport.com`
 7. Copy `sk-game-role` from Request Headers
 
