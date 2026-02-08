@@ -53,9 +53,10 @@ Copy-Item .env.example .env
 2. Open DevTools (F12) → Application/Storage → Cookies
 3. Refresh the page.
 4. Find the `ACCOUNT_TOKEN` cookie, enable "Show URL-decoded" option, and copy its value
-5. And open Network tab, Refresh the page.
-6. Find any request to `zonai.skport.com`
-7. Copy `sk-game-role` from Request Headers
+5. Open Network tab, Refresh the page.
+6. In the filter, type `zonai.skport.com` to filter requests
+7. Find the `attendance` request
+8. Copy `sk-game-role` from Request Headers
 
 ### 4) Configure environment variables
 
